@@ -7,6 +7,7 @@ import path from "path";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import multer from "multer";
+import { GridFsStorage } from "multer-gridfs-storage";
 import { fileURLToPath } from "url";
 import { register } from "./controllers/auth.js";
 import { createPost } from "./controllers/post.js";
@@ -31,13 +32,29 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
-// File stroage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/assets");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
+// // File stroage
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "public/assets");
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, file.originalname);
+//   },
+// });
+// const upload = multer({ storage });
+
+const storage = new GridFsStorage({
+  url: process.env.MONGO_URL,
+  options: { useNewUrlParser: true, useUnifiedTopology: true },
+  file: (req, file) => {
+    return new Promise((resolve, reject) => {
+      const filename = file.originalname;
+      const fileInfo = {
+        filename: filename,
+        bucketName: "uploads",
+      };
+      resolve(fileInfo);
+    });
   },
 });
 const upload = multer({ storage });
