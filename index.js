@@ -47,6 +47,7 @@ const storage = new GridFsStorage({
   url: process.env.MONGO_URL,
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => {
+    console.log(file);
     return new Promise((resolve, reject) => {
       const filename = file.originalname;
       const fileInfo = {
@@ -60,8 +61,8 @@ const storage = new GridFsStorage({
 const upload = multer({ storage });
 
 // Routes with file upload
-app.post("/api/auth/register", upload.single("picture"), register);
-app.post("/api/posts", verifyToken, upload.single("picture"), createPost);
+app.post("/api/auth/register", upload.single(""), register);
+app.post("/api/posts", verifyToken, upload.single(""), createPost);
 
 /* ROUTES */
 app.use("/api/auth", authRoutes);

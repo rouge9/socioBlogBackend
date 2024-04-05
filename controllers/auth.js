@@ -29,7 +29,6 @@ export const register = async (req, res) => {
       viewedProfile: 0,
       impressions: 0,
     });
-
     const saveduser = await newUser.save();
     res.status(200).json(saveduser);
   } catch (error) {
